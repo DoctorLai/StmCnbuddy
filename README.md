@@ -1,0 +1,3 @@
+# CNBuddy
+
+The cnbuddy autobot.

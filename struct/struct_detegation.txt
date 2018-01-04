@@ -1,0 +1,17 @@
+[ 1,
+  {
+    trx_id: '5489b757812587b63c61e832755ef5c48c58f571',
+    block: 16285171,
+    trx_in_block: 15,
+    op_in_trx: 285,
+    virtual_op: 0,
+    timestamp: '2017-10-13T05:08:45',
+    op: [ 'delegate_vesting_shares', 
+          {
+            delegator: 'steem',
+            delegatee: 'cnbuddy',
+            vesting_shares: '29833.113622 VESTS'
+          }
+        ]
+  }
+]
