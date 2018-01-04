@@ -15,6 +15,7 @@
     "min_mem_weight":   0.2,
     "upvote_gap":       3,
     "reply_gap":        20,
-    "job_interval":     180,
+    "job_interval":     300,
+    "time_upvote":      1500,
     "cners_url":        "https://uploadbeta.com/api/steemit/wechat/?cache"
 }
