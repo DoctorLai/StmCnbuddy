@@ -1,10 +1,10 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.0.10
+ * @version 1.0.11
  */
 var name = module.exports.name = 'cnbuddy';
-module.exports.version = '1.0.10';
+module.exports.version = '1.0.11';
 
 var CronJob = require('cron').CronJob;
 var fs = require('fs');
@@ -36,7 +36,7 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
                                    err.message);
             return err;
         } // if (err)
-        db.collection('blogs').updateMany({ upovoted:{ $eq:false }},
+        db.collection('blogs').updateMany({ upvoted:{ $eq:false }},
                                           { $set:{ scheduled:false }},
                                           function(err, res) {
             if (err) {
@@ -144,10 +144,8 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
 
     // upvote blogs - loop every minute
     new CronJob(((seconds+53)%60) + ' * * * * *', function() {
-        if (new Date().getUTCMinutes() === 0) {
-            options.loggers[1].log('info', '<cnbuddy.upvoteBlogs> starting at ' +
-                                           new Date().toISOString());
-        } // if (new Date().getUTCMinutes() === 0)
+        options.loggers[1].log('info', '<cnbuddy.upvoteBlogs> starting at ' +
+                                        new Date().toISOString());
         upvoteBlogs(options, function(result) {
             if (result.blogs.length === 0) {
                 return ;

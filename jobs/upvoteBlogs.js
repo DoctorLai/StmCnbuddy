@@ -50,11 +50,9 @@ module.exports = function(options, callback) {
             } // if (err)
 
             // Log the blogs to be upvoted and replied
-            if (now.getUTCMinutes() === 0) {
-                options.loggers[1].log('info',
-                                       '<' + funcName + '> Blogs scheduled: '
-                                           + res.length);
-            } // if (now.getUTCMinutes() === 0)
+            options.loggers[1].log('info',
+                                    '<' + funcName + '> Blogs scheduled: '
+                                        + res.length);
 
             if (res.length === 0) {
                 now.setUTCSeconds(0, 0);
