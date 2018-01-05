@@ -28,7 +28,6 @@ module.exports = function(options, callback) {
         } // if (err)
         db.collection('cners').find({}).toArray(function(err, res) {
             if (err) {
-                // console.error(err.message)
                 options.loggers[1].log('error',
                                        '<' + moduleName + '.db.cners.find> ' +
                                        err.message);

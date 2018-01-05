@@ -1,13 +1,14 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.0.8
+ * @version 1.0.10
  */
 var name = module.exports.name = 'cnbuddy';
-module.exports.version = '1.0.8';
+module.exports.version = '1.0.10';
 
 var CronJob = require('cron').CronJob;
 var fs = require('fs');
+var MongoClient = require('mongodb').MongoClient;
 
 var findBlogs = require('./jobs/findBlogs');
 var findCners = require('./jobs/findCners');
@@ -26,6 +27,25 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
     options.loggers[1].log('info', 'cnbuddy started at ' + new Date().toISOString());
     var gaps = Math.round(options.job_interval / 60);
     var seconds = new Date().getUTCSeconds();
+
+    // Prerequisites
+    MongoClient.connect(options.database, function(err, db) {
+        if (err) {
+            options.loggers[0].log('error',
+                                   '<' + name + '.MongoClient.connect> ' +
+                                   err.message);
+            return err;
+        } // if (err)
+        db.collection('blogs').updateMany({ upovoted:{ $eq:false }},
+                                          { $set:{ scheduled:false }},
+                                          function(err, res) {
+            if (err) {
+                options.loggers[1].log('error',
+                                       '<' + name + '.db.cners.find> ' +
+                                       err.message);
+            } // if (err)
+        }); // db.collection('blogs').updateMany( ... });
+    }); // MongoClient.connect(options.database, function(err, db) { ... });
 
     // find cners
     var cntFindCners = gaps - 1;
