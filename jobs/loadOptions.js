@@ -98,12 +98,17 @@ module.exports = function(password, param, callback) {
                     options.total_vesting_shares = Number(re.total_vesting_shares.split(' ')[0]);
                     options.total_vesting_fund_steem = Number(re.total_vesting_fund_steem.split(' ')[0]);
 
-                    // Loading is done, return
-                    if (callback) {
-                        callback(options);
-                    } // if (callback)
-                    return options;
+                    // Find how much is 1%
+                    steem.api.getConfig(function(err, re) {
+                        options.STEEMIT_100_PERCENT = re.STEEMIT_100_PERCENT;
 
+                        // Loading is done, return
+                        if (callback) {
+                            callback(options);
+                        } // if (callback)
+                        return options;
+
+                    }); // steem.api.getConfig(function(err, re) { ... });
                 }); // steem.api.getDynamicGlobalProperties(function(err, re) { ... });
             }); // steem.api.getAccounts([options.me], function(err, res) { ... });
 

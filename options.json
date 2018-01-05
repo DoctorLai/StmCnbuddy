@@ -10,12 +10,9 @@
     "huge_number":      1000000000,
     "quiet_message":    [ "取消", "cancel" ],
     "blogs_per_day":    2,
-    "member_speed":     6,
-    "maximum_weight":   1.0,
-    "min_mem_weight":   0.2,
     "upvote_gap":       3,
     "reply_gap":        20,
-    "job_interval":     300,
+    "job_interval":     1200,
     "time_upvote":      1500,
     "cners_url":        "https://uploadbeta.com/api/steemit/wechat/?cache"
 }

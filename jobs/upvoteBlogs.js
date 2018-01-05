@@ -190,7 +190,8 @@ var UpvoteBlog = function(options, db, blogs, idx, callback) {
     // Vote now
     options.voting = true;
     steem.broadcast.vote(options.posting_key, options.me, blog.author, blog.permlink,
-                         Math.round(100.0 * votingWeight), function(err, result) {
+                         Math.round(options.STEEMIT_100_PERCENT * votingWeight),
+                         function(err, result) {
         if (err) {
             options.voting = false;
             if ('cntVoted' in options) {
