@@ -83,6 +83,9 @@ module.exports = function(password, param, callback) {
             } // if (err)
             options.messages = JSON.parse(data.toString());
 
+            // Config steem to avoid unhandled error WebSocket not open
+            steem.api.setOptions({url: 'https://api.steemit.com'});
+
             // Calculate my own vests
             options.vests = 0.0;
             steem.api.getAccounts([options.me], function(err, res) {
