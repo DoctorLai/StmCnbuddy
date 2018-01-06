@@ -6,7 +6,6 @@
 var GetVotingWeight = require('../memberships').GetVotingWeight;
 var MongoClient = require('mongodb').MongoClient;
 var steem = require('steem');
-var wait = require('wait-for-stuff');
 
 
 var moduleName = 'upvoteBlogs';
@@ -150,7 +149,21 @@ var PrepareUpvoteBlog = function(options, db, blogs, idx, callback) {
                 PrepareUpvoteBlog(options, db, blogs, idx+1, callback);
             } // if (idx === blogs.length - 1)
         } else {                                                    // Not yet voted
-            UpvoteBlog(options, db, blogs, idx, callback);
+            // Wait for the upvote procedure is idle
+            (function(op, callback) {
+                if (op.voting) {                            // Still voting:
+                    var itvl = setInterval(function() {     // Wait every 1s
+                        if (!op.voting) {                   // for voting done
+                            clearInterval(itvl);
+                            callback();
+                        } // if (!op.voting)
+                    }, 1000);
+                } else {                                    // Not voting
+                    callback();
+                } // else - if (op.voting)
+            })(options, function() {
+                UpvoteBlog(options, db, blogs, idx, callback);
+            }); // (function(op, callback) { ... })(options, function() { ... });
         } // else - if (results.map( (b)=>b.voter ).includes(options.me))
     }); // steem.api.getActiveVotes(blog.author, blog.permlink, ... );
 }; // var PrepareUpvoteBlog = function(options, db, blogs, idx, callback) { ... };
@@ -166,11 +179,6 @@ var PrepareUpvoteBlog = function(options, db, blogs, idx, callback) {
 var UpvoteBlog = function(options, db, blogs, idx, callback) {
     var funcName = 'UpvoteBlog';
     var blog = blogs[idx];
-
-    // Wait for the upvote procedure is idle
-    while (options.voting) {
-        wait.for.time(1);
-    } // while (options.voting)
 
     // Voting weight setup
     var votingWeight = options.special_thanks &&
@@ -280,7 +288,21 @@ var PrepareReplyBlog = function(options, db, blogs, idx, callback) {
                 PrepareUpvoteBlog(options, db, blogs, idx+1, callback);
             } // if (idx === blogs.length - 1)
         } else {                                                        // Reply
-            ReplyBlog(options, db, blogs, idx, callback);
+            // Wait for the reply procedure is idle
+            (function(op, callback) {
+                if (op.replying) {                          // Still replying:
+                    var itvl = setInterval(function() {     // Wait every 1s
+                        if (!op.replying) {                 // for replying done
+                            clearInterval(itvl);
+                            callback();
+                        } // if (!op.replying)
+                    }, 1000);
+                } else {                                    // Not replying
+                    callback();
+                } // else - if (op.replying)
+            })(options, function() {
+                ReplyBlog(options, db, blogs, idx, callback);
+            }); // (function(op, callback) { ... })(options, function() { ... });
         }// if (res.map( (e)=>e.name ).includes(blog.author))
 
     }); // db.collection('quiets').find({}).toArray(function(err, res) { ... });
@@ -303,11 +325,6 @@ var ReplyBlog = function(options, db, blogs, idx, callback) {
     options.messages[options.locale.code].forEach(function(e) {
         msg += e[Math.floor(Math.random() * e.length)];
     }); // options.messages[options.locale.code].forEach( ... );
-
-    // Wait for the reply procedure is idle
-    while (options.replying) {
-        wait.for.time(1);
-    } // while (options.replying)
 
     // Reply now
     options.replying = true;
@@ -363,3 +380,21 @@ var ReplyBlog = function(options, db, blogs, idx, callback) {
 
     }); // steem.broadcast.comment( ... );
 }; // var ReplyBlog = function(options, db, blogs, idx, callback) { ... };
+
+
+/**
+ * Wait for time
+ * @param {*} flag 
+ * @param {*} t 
+ * @param {*} ms 
+ * @param {*} callback 
+ */
+var waitUntil = function(flag, t, seconds, callback) {
+    setTimeout(function() {
+        if (flag === t) {
+            callback();
+        } else {
+            waitUntil(flag, t, seconds, callback);
+        } // if (flag === t)
+    }, ms); // setTimeout(function() { ... }, ms);
+}; // var waitUntil = function(flag, t, seconds, callback) { ... };
