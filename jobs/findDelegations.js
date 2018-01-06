@@ -1,7 +1,7 @@
 /**
  * The job to find delegations
  * @author:  MarcoXZh3
- * @version: 1.0.0
+ * @version: 1.1.0
  */
 var GetMembership = require('../memberships').GetMembership;
 var MongoClient = require('mongodb').MongoClient;
@@ -17,8 +17,21 @@ var moduleName = 'findDelegations';
  *      @param {array}      newDeles    array of new delegations
  */
 module.exports = function(options, callback) {
-    // Find new delegations
-    steem.api.getAccountHistory(options.me, -1, 10000, function(err, res) {
+    findAllDelegations(options, 0, [], callback);
+}; // module.exports = function(options, callback)
+
+
+/**
+ * Find all delegations from steem
+ * @param {json}        options     the options for the job
+ * @param {integer}     start       the start number to search
+ * @param {integer}     allDeles    the list of all delegations found
+ * @param {function}    callback    the callback function
+ *      @param {array}      newDeles    array of new delegations
+ */
+var findAllDelegations = function(options, start, allDeles, callback) {
+    start += 10000;
+    steem.api.getAccountHistory(options.me, start, 10000, function(err, res) {
         if (err) {
             options.loggers[1].log('error',
                                    '<' + moduleName + '.steem.api.getAccountHistory> ' +
@@ -29,7 +42,8 @@ module.exports = function(options, callback) {
             return err;
         } // if (err)
 
-        var allDeles = res.map(function(re) {
+        // all delegations this round
+        var allDeles1 = res.map(function(re) {
             if (re[1].op[0] !== 'delegate_vesting_shares') {
                 return ;
             } // if (re[1].op[0] !== 'delegate_vesting_shares')
@@ -48,9 +62,20 @@ module.exports = function(options, callback) {
             }; // return { ... };
         }).filter( (e)=>e ); // var allDeles = res.map( ... ).filter( ... );
 
-        return SaveDelegationsToDb(options, allDeles, callback);
-    }); // steem.api.getAccountHistory(options.me, 10000, 10000, function(err, res) );
-}; // module.exports = function(options, callback)
+        // New delegations are those in this round but not in previous rounds
+        var newDeles = allDeles1.map(function(e) {
+            return allDeles.findIndex( (d)=>d.time.getTime()===e.time.getTime())
+                        >= 0 ? null : e;
+        }).filter( (e)=>e ); // var newDeles = allDeles1.map( ... ).filter( ... );
+        if (newDeles.length === 0) {
+            return SaveDelegationsToDb(options, allDeles, callback);
+        } else {
+            allDeles = allDeles.concat(newDeles);
+            return findAllDelegations(options, start + 10000, allDeles, callback);
+        } // else - if (newDeles.length === 0)
+    }); // steem.api.getAccountHistory(options.me, start, 10000, function(err, res) );
+}; // var findAllDelegations = function(options, start, allDeles, callback) { ... };
+
 
 /**
  * Save delegations to database
