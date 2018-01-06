@@ -1,11 +1,11 @@
 /**
  * The job to find delegations
  * @author:  MarcoXZh3
- * @version: 1.1.0
+ * @version: 1.0.0
  */
 var GetMembership = require('../memberships').GetMembership;
 var MongoClient = require('mongodb').MongoClient;
-var sql = require("mssql");
+var steem = require('steem');
 
 
 var moduleName = 'findDelegations';
@@ -17,44 +17,39 @@ var moduleName = 'findDelegations';
  *      @param {array}      newDeles    array of new delegations
  */
 module.exports = function(options, callback) {
-    var query = (`SELECT * FROM TxDelegateVestingShares ` + // the target table
-                 `WHERE delegatee = N'cnbuddy'`);           // only cnbuddy
-
-    sql.connect(options.sqlserver, function(err) {
+    // Find new delegations
+    steem.api.getAccountHistory(options.me, -1, 10000, function(err, res) {
         if (err) {
             options.loggers[1].log('error',
-                                   '<' + moduleName + '.sql.connect> ' +
+                                   '<' + moduleName + '.steem.api.getAccountHistory> ' +
                                    err.message);
             if (callback) {
                 callback(err);
             } // if (callback)
             return err;
         } // if (err)
-        new sql.Request().query(query, function(err, res) {
-            if (err) {
-                options.loggers[1].log('error',
-                                       '<' + moduleName + '.sql.Request.query> ' +
-                                       err.message);
-                if (callback) {
-                    callback(err);
-                } // if (callback)
-                return err;
-            } // if (err)
 
-            // Deal with these delegation records
-            sql.close();
-            return SaveDelegationsToDb(
-                options,
-                res.recordset.map(function(e) {
-                    return e.delegator === 'steem' ? null : {
-                        'delegator': e.delegator,
-                        'time':      e.timestamp,
-                        'vests':     e.vesting_shares
-                    }; // return { ... };
-                }).filter( (e)=>e ),
-                callback);
-        }); // new sql.Request().query(sql1, function(err, res) { ... });
-    }); // sql.connect(options.sqlserver, function(err) { ... });
+        var allDeles = res.map(function(re) {
+            if (re[1].op[0] !== 'delegate_vesting_shares') {
+                return ;
+            } // if (re[1].op[0] !== 'delegate_vesting_shares')
+            if (re[1].op[1].delegator === 'steem') {
+                return ;
+            } // if (re[1].op[1].delegator === 'steem')
+            var time = re[1].timestamp;
+            if (!time.endsWith('Z')) {                  // The time was a UTC string
+                time += 'Z';
+            } // if (!time.endsWith('Z'))
+            time = new Date(time);
+            return {
+                'delegator': re[1].op[1].delegator,
+                'time':      time,
+                'vests':     parseFloat(re[1].op[1].vesting_shares.split(' ')[0])
+            }; // return { ... };
+        }).filter( (e)=>e ); // var allDeles = res.map( ... ).filter( ... );
+
+        return SaveDelegationsToDb(options, allDeles, callback);
+    }); // steem.api.getAccountHistory(options.me, 10000, 10000, function(err, res) );
 }; // module.exports = function(options, callback)
 
 /**
