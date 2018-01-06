@@ -1,6 +1,11 @@
 {
     "me":               "cnbuddy",
     "locale":           { "code":"zh_CN", "name":"简体中文" },
+    "sqlserver": {
+        "server":   "sql.steemsql.com",
+        "user":     "steemit",
+        "password": "steemit"
+    },
     "database": {
         "engine":   "MongoDB",
         "name":     "steemitdb",
