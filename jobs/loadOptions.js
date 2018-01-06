@@ -86,24 +86,26 @@ module.exports = function(password, param, callback) {
             // Config steem to avoid unhandled error WebSocket not open
             steem.api.setOptions({url: 'https://api.steemit.com'});
 
-            // Calculate my own vests
-            options.vests = 0.0;
-            steem.api.getAccounts([options.me], function(err, res) {
-                if (err) {
-                    loggers[1].log('error', '<' + moduleName + '.fs.readFile> ' +
-                                            err.message);
-                } // if (err)
-                options.vests += parseFloat(res[0].vesting_shares.split(' ')[0]);
-                options.vests += parseFloat(res[0].received_vesting_shares.split(' ')[0]);
+            // Find how much is 1%
+            steem.api.getConfig(function(err, re) {
+                options.STEEMIT_100_PERCENT = re.STEEMIT_100_PERCENT;
 
-                // Find total vests and steems for convertion between vest and sp
-                steem.api.getDynamicGlobalProperties(function(err, re) {
-                    options.total_vesting_shares = Number(re.total_vesting_shares.split(' ')[0]);
-                    options.total_vesting_fund_steem = Number(re.total_vesting_fund_steem.split(' ')[0]);
+                // Calculate my own vests
+                options.vests = 0.0;
+                options.voting_power = 100.0 / options.STEEMIT_100_PERCENT;
+                steem.api.getAccounts([options.me], function(err, res) {
+                    if (err) {
+                        loggers[1].log('error', '<' + moduleName + '.fs.readFile> ' +
+                                                err.message);
+                    } // if (err)
+                    options.voting_power *= res[0].voting_power;
+                    options.vests += parseFloat(res[0].vesting_shares.split(' ')[0]);
+                    options.vests += parseFloat(res[0].received_vesting_shares.split(' ')[0]);
 
-                    // Find how much is 1%
-                    steem.api.getConfig(function(err, re) {
-                        options.STEEMIT_100_PERCENT = re.STEEMIT_100_PERCENT;
+                    // Find total vests and steems for convertion between vest and sp
+                    steem.api.getDynamicGlobalProperties(function(err, re) {
+                        options.total_vesting_shares = Number(re.total_vesting_shares.split(' ')[0]);
+                        options.total_vesting_fund_steem = Number(re.total_vesting_fund_steem.split(' ')[0]);
 
                         // Loading is done, return
                         if (callback) {
@@ -111,9 +113,9 @@ module.exports = function(password, param, callback) {
                         } // if (callback)
                         return options;
 
-                    }); // steem.api.getConfig(function(err, re) { ... });
-                }); // steem.api.getDynamicGlobalProperties(function(err, re) { ... });
-            }); // steem.api.getAccounts([options.me], function(err, res) { ... });
+                    }); // steem.api.getDynamicGlobalProperties(function(err, re) { ... });
+                }); // steem.api.getAccounts([options.me], function(err, res) { ... });
+            }); // steem.api.getConfig(function(err, re) { ... });
 
         }); // fs.readFile( ... );
     }); // fs.readFile( ... );
