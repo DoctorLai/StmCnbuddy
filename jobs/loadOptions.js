@@ -1,7 +1,7 @@
 /**
  * The job to load option
  * @author:  MarcoXZh3
- * @version: 1.0.0
+ * @version: 1.0.1
  */
 var encryption = require('../libencryption');
 var fs = require('fs');
@@ -98,7 +98,7 @@ module.exports = function(password, param, callback) {
                         loggers[1].log('error', '<' + moduleName + '.fs.readFile> ' +
                                                 err.message);
                     } // if (err)
-                    options.voting_power *= res[0].voting_power;
+                    options.voting_power *= res[0].voting_power * 0.01;
                     options.vests += parseFloat(res[0].vesting_shares.split(' ')[0]);
                     options.vests += parseFloat(res[0].received_vesting_shares.split(' ')[0]);
 
