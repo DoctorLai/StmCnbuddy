@@ -1,10 +1,10 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.3.1
+ * @version 1.3.2
  */
 var name = module.exports.name = 'cnbuddy';
-module.exports.version = '1.3.1';
+module.exports.version = '1.3.2';
 
 var CronJob = require('cron').CronJob;
 var fs = require('fs');

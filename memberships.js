@@ -11,7 +11,7 @@ const steem = require('steem');
  * range is left exclusive, right inclusive
  */
 var MEMBERSHIP = {
-    'NOT':      { weight:0.05, range:[Number.NEGATIVE_INFINITY, 0] },
+    'NOT':      { weight:0.01, range:[Number.NEGATIVE_INFINITY, 0] },
     'LEVEL1':   { weight:0.10, range:[0,   100] },
     'LEVEL2':   { weight:0.20, range:[100, 200] },
     'LEVEL3':   { weight:0.30, range:[200, 300] },
