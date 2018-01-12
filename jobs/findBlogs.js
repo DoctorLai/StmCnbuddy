@@ -115,9 +115,8 @@ var FindAuthorBlogs = function(options, db, cners, idx, todayBlogs, newBlogs, ca
                 upvoteat = new Date(now.getTime() + 2 * options.delay);
             } // if (upvoteat.getTime() < now.getTime() + options.delay)
             return {
-                scheduled:  false,
-                upvoted:    false,
-                replied:    false,
+                upvote:     'NOT',
+                reply:      'NOT',
                 created:    blog.created,
                 upvoteat:   upvoteat,
                 author:     blog.author,

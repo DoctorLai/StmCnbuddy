@@ -1,10 +1,9 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.3.2
+ * @version 1.4.0
  */
 var name = module.exports.name = 'cnbuddy';
-module.exports.version = '1.3.2';
 
 var CronJob = require('cron').CronJob;
 var fs = require('fs');
@@ -16,6 +15,7 @@ var findDelegations = require('./jobs/findDelegations');
 var findCnFollowers = require('./jobs/findCnFollowers');
 var findQuiets = require('./jobs/findQuiets');
 var loadOptions = require('./jobs/loadOptions');
+var replyBlogs = require('./jobs/replyBlogs');
 var upvoteBlogs = require('./jobs/upvoteBlogs');
 
 
@@ -36,12 +36,25 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
                                    err.message);
             return err;
         } // if (err)
-        db.collection('blogs').updateMany({ upvoted:{ $eq:false }},
-                                          { $set:{ scheduled:false }},
+
+        // Reset upvoting schedule
+        db.collection('blogs').updateMany({ upvote:{ $eq:'ING' }},
+                                          { $set:{ upvote:'NOT' }},
                                           function(err, res) {
             if (err) {
                 options.loggers[1].log('error',
-                                       '<' + name + '.db.cners.find> ' +
+                                       '<' + name + '.db.blogs.find> ' +
+                                       err.message);
+            } // if (err)
+        }); // db.collection('blogs').updateMany( ... });
+
+        // Resest replying schedule
+        db.collection('blogs').updateMany({ reply:{ $eq:'ING' }},
+                                          { $set:{ reply:'NOT' }},
+                                          function(err, res) {
+            if (err) {
+                options.loggers[1].log('error',
+                                       '<' + name + '.db.blogs.find> ' +
                                        err.message);
             } // if (err)
         }); // db.collection('blogs').updateMany( ... });
@@ -154,6 +167,20 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
                                            new Date().toISOString() +
                                            ' found=' + result.blogs.length);
         }); // upvoteBlogs(options, function(result) { ... });
+    }, null, true, tz); // new CronJob( ... );
+
+    // reply blogs - loop every minute
+    new CronJob(((seconds+57)%60) + ' * * * * *', function() {
+        options.loggers[1].log('info', '<cnbuddy.replyBlogs> starting at ' +
+                                        new Date().toISOString());
+        replyBlogs(options, function(result) {
+            if (result.blogs.length === 0) {
+                return ;
+            } // if (result.blogs.length === 0)
+            options.loggers[1].log('info', '<cnbuddy.replyBlogs> executed at ' +
+                                           new Date().toISOString() +
+                                           ' found=' + result.blogs.length);
+        }); // replyBlogs(options, function(result) { ... });
     }, null, true, tz); // new CronJob( ... );
 
     // reload options
