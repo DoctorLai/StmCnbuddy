@@ -112,12 +112,12 @@ var PrepareReplyBlog = function(options, db, blogs, idx, callback) {
             } // if (idx === blogs.length - 1)
         } // if (err)
         if (results.map( (b)=>b.author ).includes(options.me)) {     // Blog already replied
-            db.collection('blogs').updateMnay({ author:blog.author, permlink:blog.permlink },
+            db.collection('blogs').updateMany({ author:blog.author, permlink:blog.permlink },
                                              { $set:{ reply:'DONE' } },
                                              function(err, res) {
                 if (err) {
                     options.loggers[1].log('error',
-                                           '<' + funcName + '.db.blogs.updateMnay> ' +
+                                           '<' + funcName + '.db.blogs.updateMany> ' +
                                            err.message);
                     if (idx === blogs.length - 1) {
                         db.close();
@@ -129,7 +129,7 @@ var PrepareReplyBlog = function(options, db, blogs, idx, callback) {
                         PrepareReplyBlog(options, db, blogs, idx+1, callback);
                     } // if (idx === blogs.length - 1)
                 } // if (err)
-            }); // db.collection('blogs').updateMnay( ... );
+            }); // db.collection('blogs').updateMany( ... );
 
             // Log the already-replied
             options.loggers[1].log('warn',
@@ -168,14 +168,14 @@ var PrepareReplyBlog = function(options, db, blogs, idx, callback) {
                 // Do I reply or not
                 if (res.map( (e)=>e.name ).includes(blog.author)) {     // Quiet
                     // Save the voting to the database
-                    db.collection('blogs').updateMnay({ author:blog.author, permlink:blog.permlink },
-                                                    { $set:{ reply:'QUIET' } }, function(err, res) {
+                    db.collection('blogs').updateMany({ author:blog.author, permlink:blog.permlink },
+                                                      { $set:{ reply:'QUIET' } }, function(err, res) {
                         if (err) {
                             options.loggers[1].log('error',
-                                                    '<' + funcName + '.db.blogs.updateMnay> ' +
+                                                    '<' + funcName + '.db.blogs.updateMany> ' +
                                                     err.message);
                         } // if (err)
-                    }); // db.collection('blogs').updateMnay( ... );
+                    }); // db.collection('blogs').updateMany( ... );
 
                     // Log the quiet
                     options.loggers[1].log('info',
@@ -254,14 +254,14 @@ var ReplyBlog = function(options, db, blogs, idx, callback) {
                                 ' - ' + blog.permlink);
 
         // Save the voting to the database
-        db.collection('blogs').updateMnay({ author:blog.author, permlink:blog.permlink },
+        db.collection('blogs').updateMany({ author:blog.author, permlink:blog.permlink },
                                          { $set:{ reply:'DONE' } }, function(err, res) {
             if (err) {
                 options.loggers[1].log('error',
-                                        '<' + funcName + '.db.blogs.updateMnay> ' +
+                                        '<' + funcName + '.db.blogs.updateMany> ' +
                                         err.message);
             } // if (err)
-        }); // db.collection('blogs').updateMnay( ... );
+        }); // db.collection('blogs').updateMany( ... );
 
         // Now it's time to go to the next blog, if available
         if (idx === blogs.length - 1) {

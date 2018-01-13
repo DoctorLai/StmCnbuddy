@@ -113,12 +113,12 @@ var PrepareUpvoteBlog = function(options, db, blogs, idx, callback) {
         } // if (err)
 
         if (results.map( (b)=>b.voter ).includes(options.me)) {     // Blog already upvoted
-            db.collection('blogs').updateMnay({ author:blog.author, permlink:blog.permlink },
+            db.collection('blogs').updateMany({ author:blog.author, permlink:blog.permlink },
                                               { $set:{ upvote:'DONE' } },
                                               function(err, res) {
                 if (err) {
                     options.loggers[1].log('error',
-                                        '<' + funcName + '.db.blogs.updateMnay> ' +
+                                        '<' + funcName + '.db.blogs.updateMany> ' +
                                         err.message);
                     if (idx === blogs.length - 1) {
                         db.close();
@@ -130,7 +130,7 @@ var PrepareUpvoteBlog = function(options, db, blogs, idx, callback) {
                         PrepareUpvoteBlog(options, db, blogs, idx+1, callback);
                     } // if (idx === blogs.length - 1)
                 } // if (err)
-            }); // db.collection('blogs').updateMnay( ... );
+            }); // db.collection('blogs').updateMany( ... );
 
             // Log the already-voted
             options.loggers[1].log('warn',
@@ -220,15 +220,15 @@ var UpvoteBlog = function(options, db, blogs, idx, callback) {
                                 ' - ' + blog.permlink);
 
         // Save the voting to the database
-        db.collection('blogs').updateMnay({ author:blog.author, permlink:blog.permlink },
+        db.collection('blogs').updateMany({ author:blog.author, permlink:blog.permlink },
                                          { $set:{ upvote:'DONE' } },
                                          function(err, res) {
             if (err) {
                 options.loggers[1].log('error',
-                                       '<' + funcName + '.db.blogs.updateMnay> ' +
+                                       '<' + funcName + '.db.blogs.updateMany> ' +
                                        err.message);
             } // if (err)
-        }); // db.collection('blogs').updateMnay( ... );
+        }); // db.collection('blogs').updateMany( ... );
 
         // Now let's go to the next  blog, if available
         if (idx === blogs.length - 1) {
