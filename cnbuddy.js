@@ -1,7 +1,7 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.4.3
+ * @version 1.4.4
  */
 var name = module.exports.name = 'cnbuddy';
 

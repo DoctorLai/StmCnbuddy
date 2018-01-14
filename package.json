@@ -1,6 +1,6 @@
 {
   "name": "cnbuddy",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "The cnbuddy autobot for steemit",
   "main": "cnbuddy.js",
   "scripts": {
