@@ -1,7 +1,7 @@
 /**
  * The job to find whether the cners want quiet
  * @author:  MarcoXZh3
- * @version: 1.0.0
+ * @version: 1.0.1
  */
 var MongoClient = require('mongodb').MongoClient;
 var steem = require('steem');
@@ -15,6 +15,7 @@ var steem = require('steem');
 //     { 'name':'bobdos' },
 //     { 'name':'chinadaily' },
 //     { 'name':'cifer' },
+//     { 'name':'dapeng' },
 //     { 'name':'fr3eze' },
 //     { 'name':'harbour' },
 //     { 'name':'jessie901220' },
