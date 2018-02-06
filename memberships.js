@@ -11,13 +11,15 @@ const steem = require('steem');
  * range is left exclusive, right inclusive
  */
 var MEMBERSHIP = {
-    'NOT':      { weight:0.01, range:[Number.NEGATIVE_INFINITY, 0] },
-    'LEVEL1':   { weight:0.10, range:[0,   100] },
-    'LEVEL2':   { weight:0.20, range:[100, 200] },
-    'LEVEL3':   { weight:0.30, range:[200, 300] },
-    'LEVEL4':   { weight:0.50, range:[300, 500] },
-    'LEVEL5':   { weight:0.80, range:[500, 1000] },
-    'LEVEL6':   { weight:1.00, range:[1000, Number.POSITIVE_INFINITY] }
+    'NOT':      { weight:0.001, range:[Number.NEGATIVE_INFINITY, 0] },
+    'LEVEL1':   { weight:0.500, range:[0,   200] },
+    'LEVEL2':   { weight:0.100, range:[200, 300] },
+    'LEVEL3':   { weight:0.200, range:[300, 400] },
+    'LEVEL4':   { weight:0.300, range:[400, 500] },
+    'LEVEL5':   { weight:0.400, range:[500, 600] },
+    'LEVLE6':   { weight:0.450, range:[600, 800] },
+    'LEVEL7':   { weight:0.500, range:[800, 1000] },
+    'LEVEL8':   { weight:0.600, range:[1000, Number.POSITIVE_INFINITY] }
 }; // var MEMBERSHIP = { ... };
 var epsilon = 1e-8;
 

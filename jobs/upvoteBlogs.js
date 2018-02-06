@@ -181,7 +181,7 @@ var UpvoteBlog = function(options, db, blogs, idx, callback) {
                                     options.total_vesting_shares,
                                     options.total_vesting_fund_steem,
                                     options.cntVoted);
-    votingWeight *= options.voting_power;           // apply cnbuddy's voting power
+//    votingWeight *= options.voting_power;           // apply cnbuddy's voting power
     if ('cntVoted' in options) {
         options.cntVoted ++;
     } // if ('cntVoted' in options)
