@@ -12,7 +12,7 @@ const steem = require('steem');
  */
 var MEMBERSHIP = {
     'NOT':      { weight:0.001, range:[Number.NEGATIVE_INFINITY, 0] },
-    'LEVEL1':   { weight:0.500, range:[0,   200] },
+    'LEVEL1':   { weight:0.050, range:[0,   200] },
     'LEVEL2':   { weight:0.100, range:[200, 300] },
     'LEVEL3':   { weight:0.200, range:[300, 400] },
     'LEVEL4':   { weight:0.300, range:[400, 500] },
