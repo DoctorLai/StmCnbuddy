@@ -1,7 +1,7 @@
 /**
  * cnbuddy the utomatic upvote and reply autobot
  * @author  MarcoXZh3
- * @version 1.4.8
+ * @version 1.4.9
  */
 var name = module.exports.name = 'cnbuddy';
 
@@ -168,7 +168,7 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
                                            ' found=' + result.blogs.length);
         }); // upvoteBlogs(options, function(result) { ... });
     }, null, true, tz); // new CronJob( ... );
-/*
+
     // reply blogs - loop every minute
     new CronJob(((seconds+57)%60) + ' * * * * *', function() {
         options.loggers[1].log('info', '<cnbuddy.replyBlogs> starting at ' +
@@ -182,7 +182,7 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
                                            ' found=' + result.blogs.length);
         }); // replyBlogs(options, function(result) { ... });
     }, null, true, tz); // new CronJob( ... );
-*/
+
     // reload options
     var next = new Date();
     next.setUTCHours(0, 0, 0, 0);
