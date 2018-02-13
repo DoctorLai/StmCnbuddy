@@ -17,7 +17,7 @@ var moduleName = 'findDelegations';
  *      @param {array}      newDeles    array of new delegations
  */
 module.exports = function(options, callback) {
-    findAllDelegations(options, 0, [], callback);
+    findAllDelegations(options, 9999, [], callback);
 }; // module.exports = function(options, callback)
 
 
@@ -30,7 +30,7 @@ module.exports = function(options, callback) {
  *      @param {array}      newDeles    array of new delegations
  */
 var findAllDelegations = function(options, start, allDeles, callback) {
-    start += 10000;
+    start += 1;
     steem.api.getAccountHistory(options.me, start, 10000, function(err, res) {
         if (err) {
             options.loggers[1].log('error',
