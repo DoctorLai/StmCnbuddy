@@ -60,15 +60,35 @@ function(cner, total_vesting_shares, total_vesting_fund_steem) {
  *      @param {string}     delegator   name of the delegator
  *      @param {date}       time        time of the his/her first delegation
  *      @param {double}     vests       total vests of the delegator
+ * @param {double}      my_vests        my total vesting
+ * @param {double}      total_vesting_shares        total vesting of steemit
  * @param {double}      total_vesting_shares        total vesting of steemit
  * @param {double}      total_vesting_fund_steem    total steem of steemit
  * @param {integet}     cnt     (optional) number of voted before this cner
  * @returns {double}            voting weight for the cner
  */
 var GetVotingWeight = module.exports.GetVotingWeight =
-function(cner, total_vesting_shares, total_vesting_fund_steem, cnt) {
+function(cner, my_vests, total_vesting_shares, total_vesting_fund_steem, cnt) {
+    /*
     return MEMBERSHIP[GetMembership(cner,
                                     total_vesting_shares,
                                     total_vesting_fund_steem)
                      ].weight;
+     */
+
+    var sp = steem.formatter.vestToSteem(
+        cner.vests, total_vesting_shares, total_vesting_fund_steem
+    ); // var sp = steem.formatter.vestToSteem( ... );
+
+    // Determin voting weight based on delegated sp
+    if (sp < 0 + epsilon) {             // 0
+        return 0.0001;
+    } else if (sp < 80 + epsilon) {     // 0 ~ 80
+        return 0.01;
+    } else if (sp < 2000 + epsilon) {   // 80 ~ 2000
+        // return negative to indicate that further calculation is required
+        return -5 * cner.vests / my_vests;
+    } else {                            // > 2000
+        return 0.8;
+    } // if ... else if ... else ...
 }; // var GetVotingWeight = module.exports.GetVotingWeight = function( ... )

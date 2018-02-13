@@ -178,10 +178,13 @@ var UpvoteBlog = function(options, db, blogs, idx, callback) {
                                         time:       blog.membertime,
                                         vests:      blog.vests
                                     },
+                                    options.vests,
                                     options.total_vesting_shares,
                                     options.total_vesting_fund_steem,
                                     options.cntVoted);
-//    votingWeight *= options.voting_power;           // apply cnbuddy's voting power
+    if (votingWeight < 0) {     // Negative indicates further calculation required
+        votingWeight *= -1.0 * options.voting_power * options.voting_power;
+    } // if (votingWeight < 0)
     if ('cntVoted' in options) {
         options.cntVoted ++;
     } // if ('cntVoted' in options)
