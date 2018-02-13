@@ -1,7 +1,7 @@
 /**
  * The membership management module
  * @author:  MarcoXZh3
- * @version: 1.2.0
+ * @version: 1.3.1
  */
 const steem = require('steem');
 
@@ -82,7 +82,7 @@ function(cner, my_vests, total_vesting_shares, total_vesting_fund_steem, cnt) {
 
     // Determin voting weight based on delegated sp
     if (sp < 0 + epsilon) {             // 0
-        return 0.0001;
+        return 0.001;
     } else if (sp < 80 + epsilon) {     // 0 ~ 80
         return 0.01;
     } else if (sp < 2000 + epsilon) {   // 80 ~ 2000
