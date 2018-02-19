@@ -21,7 +21,13 @@ loadOptions(password, __dirname, function(options) {        // This takes >2s
         { 'name':'rea' },
         { 'name':'rivalhw' },
         { 'name':'the01crow' },
-        { 'name':'yuxi' },
+        { 'name':'maiyude' },
+        { 'name':'fishaa' },
+        { 'name':'fishbb' },
+        { 'name':'fishcc' },
+        { 'name':'fishdd' },
+        { 'name':'tinna' },
+        { 'name':'gogoabc' },
     ]; // var x = [ ... ];
     MongoClient.connect(options.database, function(err, db) {
         db.collection('quiets').insertMany(x, function(err, res) {
