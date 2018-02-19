@@ -87,7 +87,7 @@ function(cner, my_vests, total_vesting_shares, total_vesting_fund_steem, cnt) {
         return 0.01;
     } else if (sp < 2000 + epsilon) {   // 80 ~ 2000
         // return negative to indicate that further calculation is required
-        return -5 * cner.vests / my_vests;
+        return -8 * cner.vests / my_vests;
     } else {                            // > 2000
         return 0.8;
     } // if ... else if ... else ...
